@@ -2,18 +2,18 @@ import org.apache.spark.sql.functions._
 
 println("\n>>> SPRINT 2 : CALCUL DES METRIQUES FINANCIERES <<<")
 
-// Calcul du RVI (Volatilite Relative en %)
+//1 Calcul du RVI (Volatilite Relative en %)
 // Formule : ((High - Low) / Open) * 100
 
 val dfWithMetrics = cleanedPrices.withColumn("RVI", ((col("High") - col("Low")) / col("Open")) * 100).withColumn("LogVolume", log10(col("Volume") + 1))
 
 
-// Jointure avec les Shares Outstanding (uniquement si Symbol est present)
+//2 Jointure avec les Shares Outstanding (uniquement si Symbol est present)
 
 val dfEnriched = dfWithMetrics.join(cleanedShares, "Symbol")
 
 // Calcul du Turnover Ratio (Volume / Actions en circulation)
-// Et du Score de Risque (RVI * LogVolume)
+//3 Et du Score de Risque (RVI * LogVolume)
 
 val dfFinalMetrics = dfEnriched.withColumn("TurnoverRatio", col("Volume") / col("shareOutstanding")).withColumn("RiskScore", col("RVI") * col("LogVolume"))
 
