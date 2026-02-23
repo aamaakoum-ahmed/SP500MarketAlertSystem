@@ -28,7 +28,7 @@ val rawPrices = spark.read.option("header", "true").schema(priceSchema).csv(path
 val rawShares = spark.read.option("header", "true").option("inferSchema", "true").csv(pathShares)
 
 // 3. Nettoyage (Verifie bien que rawPrices est bien un DataFrame maintenant)
-val cleanedPrices = rawPrices.withColumn("Date", col("Date").cast(DateType)).filter(col("Volume") > 0 && col("Open") > 0).drop("Stock Splits").na.drop()
+val cleanedPrices = rawPrices.withColumn("Symbol", lit("AAPL")).withColumn("Date", col("Date").cast(DateType)).filter(col("Volume") > 0 && col("Open") > 0).drop("Stock Splits").na.drop()
 val cleanedShares = rawShares.select(col("Symbol"), col("shareOutstanding").cast(DoubleType)).na.drop()
 
 // 4. Statistiques
